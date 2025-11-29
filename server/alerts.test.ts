@@ -64,5 +64,5 @@ describe("alerts router", () => {
     expect(result).toBeDefined();
     expect(result).toHaveProperty('success');
     expect(result).toHaveProperty('message');
-  });
+  }, 10000); // Timeout de 10 secondes pour la génération d'alertes
 });

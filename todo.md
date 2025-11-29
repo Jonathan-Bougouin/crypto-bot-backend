@@ -62,3 +62,30 @@
 ### Déploiement
 - [x] Créer un checkpoint avec l'intégration API
 - [x] Livrer la version mise à jour
+
+## Phase 3 : Notifications Push Navigateur (🚧 En cours)
+
+### Backend
+- [ ] Créer un endpoint pour vérifier les nouvelles alertes depuis le dernier check
+- [ ] Ajouter un système de tracking des alertes déjà notifiées
+
+### Frontend - Système de Notifications
+- [x] Créer un hook React pour gérer les permissions de notification
+- [x] Implémenter la demande de permission au chargement de l'application
+- [x] Créer un service de notification pour envoyer les notifications push
+- [x] Ajouter un système de détection des nouvelles alertes
+- [x] Implémenter les notifications avec son et badge
+
+### Frontend - Interface Utilisateur
+- [x] Ajouter un bouton pour activer/désactiver les notifications dans le header
+- [x] Ajouter un indicateur visuel du statut des notifications (activé/désactivé)
+- [ ] Créer une page de paramètres pour gérer les préférences de notification (optionnel)
+### Tests
+- [x] Tester la demande de permission
+- [x] Tester l'envoi de notifications lors de nouvelles alertes
+- [x] Tester l'affichage du bouton de notification
+- [ ] Tester l'activation/désactivation des notifications
+
+### Déploiement
+- [x] Créer un checkpoint final avec le système de notifications
+- [x] Livrer la version mise à jour à l'utilisateur

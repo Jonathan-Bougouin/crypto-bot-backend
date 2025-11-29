@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TrendingUp, TrendingDown, Activity, Bell, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
+import { NotificationButton } from "@/components/NotificationButton";
+import { useAlertNotifications } from "@/hooks/useAlertNotifications";
 
 export default function Home() {
   const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
@@ -39,6 +41,9 @@ export default function Home() {
 
   const displayedAlerts = selectedAsset ? filteredAlerts : alerts;
 
+  // Hook de notifications pour les nouvelles alertes
+  useAlertNotifications(alerts);
+
   // Statistiques
   const stats = {
     total: alerts?.length || 0,
@@ -63,6 +68,7 @@ export default function Home() {
               </p>
             </div>
             <div className="flex gap-2">
+              <NotificationButton />
               <Button
                 variant="outline"
                 size="sm"
