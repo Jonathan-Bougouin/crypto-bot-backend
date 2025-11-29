@@ -1,5 +1,20 @@
 {
   "version": "7",
   "dialect": "mysql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1764440576995,
+      "tag": "0000_fine_vance_astro",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1764440628328,
+      "tag": "0001_many_puff_adder",
+      "breakpoints": true
+    }
+  ]
 }

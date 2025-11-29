@@ -25,4 +25,20 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * Alerts table for storing crypto trading alerts
+ */
+export const alerts = mysqlTable("alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  timestamp: timestamp("timestamp").notNull(),
+  asset: varchar("asset", { length: 20 }).notNull(),
+  price: varchar("price", { length: 50 }).notNull(), // Store as string to preserve precision
+  signalType: varchar("signalType", { length: 50 }).notNull(),
+  confidence: varchar("confidence", { length: 20 }).notNull(),
+  recommendation: text("recommendation").notNull(),
+  indicatorsTriggered: text("indicatorsTriggered").notNull(), // JSON array stored as text
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Alert = typeof alerts.$inferSelect;
+export type InsertAlert = typeof alerts.$inferInsert;
