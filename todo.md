@@ -1,6 +1,6 @@
 # Crypto Alert Dashboard - TODO
 
-## Fonctionnalités à implémenter
+## Phase 1 : Application de base (✅ Complétée)
 
 ### Backend
 - [x] Créer le schéma de base de données pour les alertes (table `alerts`)
@@ -23,5 +23,42 @@
 - [x] Tester les filtres et la pagination
 
 ### Déploiement
-- [ ] Créer un checkpoint final
-- [ ] Livrer l'application web à l'utilisateur
+- [x] Créer un checkpoint final
+- [x] Livrer l'application web à l'utilisateur
+
+## Phase 2 : Intégration API Temps Réel (✅ Complétée)
+
+### Recherche et Configuration
+- [x] Rechercher la documentation de l'API CoinGecko
+- [x] Identifier les endpoints nécessaires pour BTC, ETH, PEPE
+- [x] Définir la structure des données à récupérer
+
+### Backend - Service API
+- [x] Créer un service TypeScript pour interroger l'API CoinGecko
+- [x] Implémenter la récupération des prix en temps réel
+- [x] Implémenter la récupération des volumes de trading
+- [x] Implémenter la récupération des données OHLC (Open, High, Low, Close)
+- [x] Ajouter un système de cache pour limiter les appels API
+- [x] Créer les procédures tRPC pour exposer les données de marché
+
+### Backend - Analyse Technique
+- [x] Créer un module de calcul des indicateurs techniques (RSI, Bollinger Bands)
+- [x] Créer un module de détection des signaux de volume
+- [x] Intégrer les calculs d'indicateurs avec les données temps réel
+- [x] Mettre à jour le script de génération d'alertes pour utiliser les vraies données
+
+### Frontend
+- [x] Ajouter l'affichage des prix en temps réel dans le dashboard
+- [x] Ajouter des graphiques de prix avec Recharts
+- [x] Ajouter un indicateur de connexion API (status)
+- [x] Implémenter le rafraîchissement automatique des données
+
+### Tests
+- [x] Tester la récupération des données depuis l'API
+- [x] Tester le calcul des indicateurs techniques
+- [x] Tester la génération d'alertes avec les vraies données
+- [x] Tester l'affichage des graphiques
+
+### Déploiement
+- [x] Créer un checkpoint avec l'intégration API
+- [x] Livrer la version mise à jour

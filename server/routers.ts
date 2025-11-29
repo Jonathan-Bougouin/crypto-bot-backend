@@ -18,6 +18,25 @@ export const appRouter = router({
     }),
   }),
 
+  market: router({
+    prices: publicProcedure.query(async () => {
+      const { getCurrentPrices } = await import("./polygonService");
+      return await getCurrentPrices();
+    }),
+    coinPrice: publicProcedure
+      .input(z.object({ symbol: z.string() }))
+      .query(async ({ input }) => {
+        const { getCoinPrice } = await import("./polygonService");
+        return await getCoinPrice(input.symbol);
+      }),
+    ohlc: publicProcedure
+      .input(z.object({ symbol: z.string(), days: z.number().default(7) }))
+      .query(async ({ input }) => {
+        const { getOHLCData } = await import("./polygonService");
+        return await getOHLCData(input.symbol, input.days);
+      }),
+  }),
+
   alerts: router({
     list: publicProcedure.query(async () => {
       const { getRecentAlerts } = await import("./db");
@@ -38,19 +57,19 @@ export const appRouter = router({
         }));
       }),
     generate: publicProcedure.mutation(async () => {
-      // Appel du script Python pour générer des alertes
+      // Appel du script Python pour générer des alertes avec les vraies données
       const { exec } = await import("child_process");
       const { promisify } = await import("util");
       const execAsync = promisify(exec);
       
       try {
         const { stdout, stderr } = await execAsync(
-          "python3 server/generate_alerts.py",
-          { cwd: process.cwd() }
+          "python3 server/generate_real_alerts.py",
+          { cwd: process.cwd(), timeout: 30000 }
         );
         console.log(stdout);
         if (stderr) console.error(stderr);
-        return { success: true, message: "Alertes générées avec succès" };
+        return { success: true, message: "Alertes générées avec succès (données temps réel)" };
       } catch (error) {
         console.error("Erreur lors de la génération d'alertes:", error);
         return { success: false, message: "Erreur lors de la génération d'alertes" };

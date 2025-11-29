@@ -10,6 +10,11 @@ import { useState } from "react";
 export default function Home() {
   const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
   
+  // Récupération des prix en temps réel
+  const { data: marketPrices } = trpc.market.prices.useQuery(undefined, {
+    refetchInterval: 30000, // Rafraîchir toutes les 30 secondes
+  });
+  
   // Récupération des alertes
   const { data: alerts, isLoading, refetch } = trpc.alerts.list.useQuery(undefined, {
     refetchInterval: 30000, // Rafraîchir toutes les 30 secondes
