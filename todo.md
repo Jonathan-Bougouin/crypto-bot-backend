@@ -89,3 +89,36 @@
 ### Déploiement
 - [x] Créer un checkpoint final avec le système de notifications
 - [x] Livrer la version mise à jour à l'utilisateur
+
+## Phase 4 : Optimisation Mobile (✅ Complétée)
+
+### Header
+- [x] Réduire la taille du titre et du logo sur mobile
+- [x] Rendre les boutons plus compacts (icônes seulement sur très petit écran)
+- [x] Améliorer l'espacement et le padding du header sur mobile
+
+### Cartes de Statistiques
+- [x] Optimiser la grille des cartes pour mobile (2 colonnes sur mobile, 4 sur desktop)
+- [x] Réduire la taille des polices dans les cartes
+- [x] Ajuster les espacements entre les cartes
+
+### Alertes de Trading
+- [x] Simplifier l'affichage des alertes sur mobile (moins d'informations visibles)
+- [x] Rendre les cartes d'alertes plus compactes
+- [x] Améliorer la lisibilité des badges et indicateurs
+- [x] Optimiser l'affichage des indicateurs déclenchés (wrap sur plusieurs lignes)
+
+### Typographie et Espacements
+- [x] Ajuster les tailles de police pour mobile (plus petites mais lisibles)
+- [x] Réduire les paddings et margins sur mobile
+- [x] Améliorer les breakpoints Tailwind pour une meilleure adaptation
+
+### Tests
+- [x] Tester sur iPhone (Safari)
+- [x] Tester sur Android (Chrome)
+- [x] Tester sur tablette (iPad, Android)
+- [x] Vérifier la lisibilité et l'utilisabilité
+
+### Déploiement
+- [x] Créer un checkpoint avec l'optimisation mobile
+- [x] Livrer la version optimisée à l'utilisateur
