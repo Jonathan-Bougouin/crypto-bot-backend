@@ -42,3 +42,25 @@ export const alerts = mysqlTable("alerts", {
 
 export type Alert = typeof alerts.$inferSelect;
 export type InsertAlert = typeof alerts.$inferInsert;
+
+/**
+ * Trades table for storing trading history and performance tracking
+ */
+export const trades = mysqlTable("trades", {
+  id: int("id").autoincrement().primaryKey(),
+  alertId: int("alertId"), // Reference to the alert that triggered this trade (optional)
+  asset: varchar("asset", { length: 20 }).notNull(),
+  entryPrice: varchar("entryPrice", { length: 50 }).notNull(), // Store as string to preserve precision
+  exitPrice: varchar("exitPrice", { length: 50 }), // Null if trade is still open
+  quantity: varchar("quantity", { length: 50 }).notNull(), // Amount traded
+  profit: varchar("profit", { length: 50 }), // Profit/loss in USD (null if trade is still open)
+  profitPercent: varchar("profitPercent", { length: 20 }), // Profit/loss percentage
+  status: mysqlEnum("status", ["open", "closed", "cancelled"]).default("open").notNull(),
+  entryTime: timestamp("entryTime").notNull(),
+  exitTime: timestamp("exitTime"), // Null if trade is still open
+  notes: text("notes"), // Optional notes about the trade
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Trade = typeof trades.$inferSelect;
+export type InsertTrade = typeof trades.$inferInsert;

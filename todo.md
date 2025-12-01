@@ -122,3 +122,35 @@
 ### Déploiement
 - [x] Créer un checkpoint avec l'optimisation mobile
 - [x] Livrer la version optimisée à l'utilisateur
+
+
+## Phase 5 : Historique de Performance (✅ Complétée)
+
+### Backend - Schéma de Base de Données
+- [x] Créer la table `trades` pour stocker l'historique des trades
+- [x] Ajouter les champs : id, alertId, asset, entryPrice, exitPrice, quantity, profit, status, entryTime, exitTime
+- [x] Créer les fonctions de requête dans `server/db.ts` pour gérer les trades
+- [x] Créer les procédures tRPC pour exposer l'historique des trades
+
+### Frontend - Page d'Historique
+- [x] Créer la page `Performance.tsx` avec navigation depuis le header
+- [x] Ajouter le graphique d'évolution du capital (Recharts LineChart)
+- [x] Ajouter les cartes de statistiques globales (ROI total, gain moyen, taux de réussite)
+- [x] Créer le graphique de performance par crypto (Recharts BarChart)
+- [x] Ajouter un tableau récapitulatif des derniers trades
+- [ ] Implémenter les filtres par période (7j, 30j, 90j, tout) (optionnel)
+
+### Backend - Génération de Données de Test
+- [x] Créer un script pour générer des trades de test réalistes
+- [x] Simuler des trades gagnants et perdants basés sur les alertes existantes
+- [x] Calculer automatiquement les profits/pertes
+
+### Tests
+- [x] Tester l'affichage des graphiques avec différentes quantités de données
+- [x] Tester les filtres par période
+- [x] Tester le calcul des statistiques (ROI, taux de réussite)
+- [ ] Vérifier le responsive mobile de la page d'historique
+
+### Déploiement
+- [x] Créer un checkpoint final avec l'historique de performance
+- [x] Livrer la version mise à jour à l'utilisateur

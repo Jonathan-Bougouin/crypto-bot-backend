@@ -3,13 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TrendingUp, TrendingDown, Activity, Bell, RefreshCw } from "lucide-react";
+import { TrendingUp, TrendingDown, Activity, Bell, RefreshCw, BarChart3 } from "lucide-react";
+import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { useState } from "react";
 import { NotificationButton } from "@/components/NotificationButton";
 import { useAlertNotifications } from "@/hooks/useAlertNotifications";
 
 export default function Home() {
+  const [, setLocation] = useLocation();
   const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
   
   // Récupération des prix en temps réel
@@ -70,6 +72,15 @@ export default function Home() {
             </div>
             <div className="flex gap-1.5 sm:gap-2 w-full sm:w-auto">
               <NotificationButton />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setLocation('/performance')}
+                className="flex-1 sm:flex-initial"
+              >
+                <BarChart3 className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Performance</span>
+              </Button>
               <Button
                 variant="outline"
                 size="sm"

@@ -76,6 +76,42 @@ export const appRouter = router({
       }
     }),
   }),
+
+  trades: router({
+    list: publicProcedure.query(async () => {
+      const { getAllTrades } = await import("./db");
+      return await getAllTrades(100);
+    }),
+    byAsset: publicProcedure
+      .input(z.object({ asset: z.string() }))
+      .query(async ({ input }) => {
+        const { getTradesByAsset } = await import("./db");
+        return await getTradesByAsset(input.asset, 100);
+      }),
+    closed: publicProcedure.query(async () => {
+      const { getClosedTrades } = await import("./db");
+      return await getClosedTrades(100);
+    }),
+    generateTest: publicProcedure.mutation(async () => {
+      // Générer des trades de test réalistes
+      const { exec } = await import("child_process");
+      const { promisify } = await import("util");
+      const execAsync = promisify(exec);
+      
+      try {
+        const { stdout, stderr } = await execAsync(
+          "python3 server/generate_test_trades.py",
+          { cwd: process.cwd(), timeout: 30000 }
+        );
+        console.log(stdout);
+        if (stderr) console.error(stderr);
+        return { success: true, message: "Trades de test générés avec succès" };
+      } catch (error) {
+        console.error("Erreur lors de la génération de trades de test:", error);
+        return { success: false, message: "Erreur lors de la génération de trades de test" };
+      }
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

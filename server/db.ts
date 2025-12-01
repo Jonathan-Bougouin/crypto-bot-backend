@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { alerts, InsertAlert, InsertUser, users } from "../drizzle/schema";
+import { alerts, InsertAlert, InsertTrade, InsertUser, trades, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -146,6 +146,88 @@ export async function getAlertsByAsset(asset: string, limit: number = 50) {
     return result;
   } catch (error) {
     console.error("[Database] Failed to get alerts:", error);
+    return [];
+  }
+}
+
+/**
+ * Trade-related queries
+ */
+
+export async function createTrade(trade: InsertTrade) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot create trade: database not available");
+    return null;
+  }
+
+  try {
+    const result = await db.insert(trades).values(trade);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to create trade:", error);
+    throw error;
+  }
+}
+
+export async function getAllTrades(limit: number = 100) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get trades: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select()
+      .from(trades)
+      .orderBy(desc(trades.entryTime))
+      .limit(limit);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get trades:", error);
+    return [];
+  }
+}
+
+export async function getTradesByAsset(asset: string, limit: number = 100) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get trades: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select()
+      .from(trades)
+      .where(eq(trades.asset, asset))
+      .orderBy(desc(trades.entryTime))
+      .limit(limit);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get trades:", error);
+    return [];
+  }
+}
+
+export async function getClosedTrades(limit: number = 100) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get closed trades: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select()
+      .from(trades)
+      .where(eq(trades.status, "closed"))
+      .orderBy(desc(trades.exitTime))
+      .limit(limit);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get closed trades:", error);
     return [];
   }
 }

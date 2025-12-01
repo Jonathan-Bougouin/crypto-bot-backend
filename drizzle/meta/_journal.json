@@ -15,6 +15,13 @@
       "when": 1764440628328,
       "tag": "0001_many_puff_adder",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1764575353769,
+      "tag": "0002_secret_freak",
+      "breakpoints": true
     }
   ]
 }
