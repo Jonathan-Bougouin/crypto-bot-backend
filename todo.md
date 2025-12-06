@@ -154,3 +154,33 @@
 ### Déploiement
 - [x] Créer un checkpoint final avec l'historique de performance
 - [x] Livrer la version mise à jour à l'utilisateur
+
+## Phase 6 : Intégration Coinbase CDP (🚧 En cours)
+
+### Configuration
+- [x] Demander les secrets API Coinbase (API Key ID, API Secret)
+- [x] Stocker les secrets de manière sécurisée dans les variables d'environnement
+
+### Backend - Service Coinbase
+- [ ] Créer un service TypeScript pour interagir avec l'API Coinbase CDP
+- [ ] Implémenter la récupération du solde du compte
+- [ ] Implémenter la récupération de la liste des actifs disponibles
+- [ ] Implémenter la création d'ordres d'achat/vente
+- [ ] Créer les procédures tRPC pour exposer les fonctionnalités Coinbase
+
+### Frontend - Interface de Trading
+- [ ] Créer une section "Solde" dans le dashboard pour afficher le solde en temps réel
+- [ ] Ajouter un bouton "Exécuter Trade" sur chaque alerte
+- [ ] Créer une modale de confirmation avant l'exécution d'un trade
+- [ ] Afficher les détails du trade (prix, quantité, frais estimés) dans la modale
+- [ ] Enregistrer automatiquement les trades exécutés dans la table `trades`
+
+### Tests
+- [ ] Tester la récupération du solde depuis l'API Coinbase
+- [ ] Tester la création d'ordres (en mode test si disponible)
+- [ ] Tester l'enregistrement des trades dans la base de données
+- [ ] Tester la modale de confirmation
+
+### Déploiement
+- [ ] Créer un checkpoint final avec l'intégration Coinbase
+- [ ] Livrer la version mise à jour à l'utilisateur

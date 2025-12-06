@@ -77,6 +77,106 @@ export const appRouter = router({
     }),
   }),
 
+  trading: router({
+    // Récupérer les soldes du compte
+    balances: publicProcedure.query(async () => {
+      const { getAccountBalances } = await import("./coinbaseService");
+      return await getAccountBalances();
+    }),
+    // Récupérer le prix actuel d'un symbole
+    price: publicProcedure
+      .input(z.object({ symbol: z.string() }))
+      .query(async ({ input }) => {
+        const { getCurrentPrice } = await import("./coinbaseService");
+        return await getCurrentPrice(input.symbol);
+      }),
+    // Placer un ordre de trading
+    placeOrder: publicProcedure
+      .input(z.object({
+        symbol: z.string(),
+        side: z.enum(["buy", "sell"]),
+        amount: z.number().positive(),
+        price: z.number().positive().optional(),
+        type: z.enum(["market", "limit"]),
+        paperTrading: z.boolean().default(true),
+      }))
+      .mutation(async ({ input }) => {
+        const { placeOrder, validateOrder } = await import("./coinbaseService");
+        const { getAccountBalances } = await import("./coinbaseService");
+        
+        // Récupérer le solde disponible
+        const balances = await getAccountBalances();
+        const eurBalance = balances.find(b => b.currency === "EUR");
+        const availableBalance = parseFloat(eurBalance?.available || "0");
+        
+        // Valider l'ordre
+        const validation = validateOrder(input, availableBalance);
+        if (!validation.valid) {
+          throw new Error(validation.error);
+        }
+        
+        // Placer l'ordre
+        const result = await placeOrder(input, input.paperTrading);
+        
+        // Si l'ordre est complété, enregistrer le trade dans la base de données
+        if (result.status === "completed") {
+          const { createTrade } = await import("./db");
+          await createTrade({
+            asset: input.symbol,
+            entryPrice: result.price.toString(),
+            quantity: result.amount.toString(),
+            status: "open",
+            entryTime: new Date(result.timestamp),
+          });
+        }
+        
+        return result;
+      }),
+    // Calculer le montant maximum d'achat
+    maxBuyAmount: publicProcedure
+      .input(z.object({ symbol: z.string(), balance: z.number() }))
+      .query(async ({ input }) => {
+        const { calculateMaxBuyAmount } = await import("./coinbaseService");
+        return await calculateMaxBuyAmount(input.symbol, input.balance);
+      }),
+  }),
+
+  paperTrading: router({
+    // Récupérer le portefeuille Paper Trading
+    portfolio: publicProcedure.query(async () => {
+      const { getPaperPortfolio } = await import("./paperTradingService");
+      return getPaperPortfolio();
+    }),
+    // Réinitialiser le portefeuille Paper Trading
+    reset: publicProcedure
+      .input(z.object({ initialCash: z.number().positive().default(50) }))
+      .mutation(async ({ input }) => {
+        const { resetPaperPortfolio } = await import("./paperTradingService");
+        return resetPaperPortfolio(input.initialCash);
+      }),
+    // Calculer la valeur du portefeuille
+    value: publicProcedure
+      .input(z.object({
+        prices: z.record(z.string(), z.number()),
+      }))
+      .query(async ({ input }) => {
+        const { calculatePaperPortfolioValue } = await import("./paperTradingService");
+        return await calculatePaperPortfolioValue(input.prices);
+      }),
+    // Obtenir l'historique des trades
+    history: publicProcedure
+      .input(z.object({ limit: z.number().default(100) }))
+      .query(async ({ input }) => {
+        const { getPaperTradeHistory } = await import("./paperTradingService");
+        return getPaperTradeHistory(input.limit);
+      }),
+    // Obtenir les statistiques
+    stats: publicProcedure.query(async () => {
+      const { getPaperTradingStats } = await import("./paperTradingService");
+      return getPaperTradingStats();
+    }),
+  }),
+
   trades: router({
     list: publicProcedure.query(async () => {
       const { getAllTrades } = await import("./db");

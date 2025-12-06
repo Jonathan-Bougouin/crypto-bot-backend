@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { NotificationButton } from "@/components/NotificationButton";
 import { useAlertNotifications } from "@/hooks/useAlertNotifications";
+import { TradingPanel } from "@/components/TradingPanel";
 
 export default function Home() {
   const [, setLocation] = useLocation();
@@ -188,7 +189,7 @@ export default function Home() {
                 {displayedAlerts.map((alert) => (
                   <Card key={alert.id} className="bg-secondary border-border hover:border-primary transition-colors">
                     <CardContent className="pt-3 sm:pt-6 pb-3 sm:pb-6">
-                      <div className="flex items-start justify-between">
+                      <div className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
                             <Badge variant="default" className="text-xs sm:text-sm font-semibold">
@@ -231,6 +232,15 @@ export default function Home() {
                               minute: '2-digit' 
                             })}
                           </div>
+                        </div>
+                        
+                        {/* Trading Panel */}
+                        <div className="ml-0 sm:ml-4 mt-3 sm:mt-0 w-full sm:w-80">
+                          <TradingPanel
+                            symbol={alert.asset}
+                            currentPrice={parseFloat(alert.price)}
+                            signalType={alert.recommendation.toLowerCase().includes('achat') || alert.recommendation.toLowerCase().includes('buy') ? 'buy' : 'sell'}
+                          />
                         </div>
                       </div>
                     </CardContent>

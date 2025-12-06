@@ -105,3 +105,24 @@ temp/
 *.db
 *.sqlite
 *.sqlite3
+
+# Project specific
+simulation_results/
+*.flag
+check_real_account.ts
+sell_super_now.ts
+sell_super_usdc.ts
+sell_super_usdc_fixed.ts
+check_and_sell_super_v2.ts
+analyze_logs.py
+generate_simulation_results.py
+visualize_results.py
+PERFORMANCE_REPORT.md
+INTEGRATION_SUMMARY.txt
+QUICK_START.md
+COINBASE_INTEGRATION_COMPLETE.md
+GUIDE_UTILISATEUR.md
+INTEGRATION_COMPLETE.md
+test_results.md
+todo.md
+FINAL_DELIVERY.md
