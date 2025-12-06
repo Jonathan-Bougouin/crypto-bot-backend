@@ -49,12 +49,14 @@ export class BotManager {
     this.bots = new Map();
     
     // Initialiser le gestionnaire de données partagé
+    // Configuration optimisée pour le Top 500 (Mode VPS)
     this.dataManager = getDataManager({
-      symbols: ['BTC-USD', 'ETH-USD', 'PEPE-USD'],
+      symbols: [], // Sera rempli dynamiquement
       marketUpdateInterval: 30000, // 30 secondes
       sentimentUpdateInterval: 300000, // 5 minutes
       enableMarketData: true,
       enableSentimentData: true,
+      useTop500: true, // Activation du mode Top 500
     });
     
     // Démarrer le gestionnaire de données

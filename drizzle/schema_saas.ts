@@ -350,3 +350,23 @@ export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+// ============================================================================
+// LEADS MARKETING
+// ============================================================================
+
+export const leads = mysqlTable('leads', {
+  id: varchar('id', { length: 36 }).primaryKey(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  source: varchar('source', { length: 50 }).default('landing_page'), // 'landing_page', 'blog', 'twitter'
+  status: varchar('status', { length: 50 }).default('subscribed'), // 'subscribed', 'unsubscribed'
+  
+  // Lead Magnet
+  leadMagnetDownloaded: boolean('lead_magnet_downloaded').default(false),
+  
+  // Métadonnées
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  ipAddress: varchar('ip_address', { length: 45 }),
+}, (table) => ({
+  emailIdx: index('leads_email_idx').on(table.email),
+}));

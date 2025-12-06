@@ -1,4 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
+import { HelmetProvider } from "react-helmet-async";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
@@ -7,37 +8,46 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Performance from "./pages/Performance";
 import Dashboard from "./pages/Dashboard";
+import BotConfig from "./pages/BotConfig";
+import BlogList from "./pages/BlogList";
+import BlogPost from "./pages/BlogPost";
+import Legal from "./pages/Legal";
+import Terms from "./pages/Terms";
+import { FloatingChat } from "@/components/FloatingChat";
+import { RiskDisclaimer } from "@/components/RiskDisclaimer";
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/performance"} component={Performance} />
-      <Route path={"/dashboard"} component={Dashboard} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
+      <Route path="/" component={Home} />
+      <Route path="/performance" component={Performance} />
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/bot-config" component={BotConfig} />
+      <Route path="/blog" component={BlogList} />
+      <Route path="/blog/:slug" component={BlogPost} />
+      <Route path="/legal" component={Legal} />
+      <Route path="/terms" component={Terms} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="dark"
-        // switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+      <ThemeProvider defaultTheme="dark">
+        <HelmetProvider>
+          <TooltipProvider>
+            <div className="flex flex-col min-h-screen">
+              <Toaster />
+              <div className="flex-grow">
+                <Router />
+              </div>
+              <RiskDisclaimer />
+              <FloatingChat />
+            </div>
+          </TooltipProvider>
+        </HelmetProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

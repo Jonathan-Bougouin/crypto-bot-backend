@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://cryptobot-pro.manus.app/sitemap.xml

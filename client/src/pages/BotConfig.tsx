@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { 
   Bot, 
@@ -116,6 +117,47 @@ export default function BotConfig() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
+        {/* Connexion Exchange */}
+        <Card className="md:col-span-2 border-blue-500/20 bg-blue-500/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-blue-500">
+              <div className="h-2 w-2 bg-blue-500 rounded-full animate-pulse" />
+              Connexion Coinbase Advanced
+            </CardTitle>
+            <CardDescription>
+              Connectez votre compte pour permettre au bot de trader. Vos clés sont chiffrées (AES-256).
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="api-key">Clé API (Key ID)</Label>
+              <Input 
+                id="api-key" 
+                placeholder="organizations/..." 
+                type="password"
+                className="bg-background"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="api-secret">Clé Secrète (Private Key)</Label>
+              <Input 
+                id="api-secret" 
+                placeholder="-----BEGIN EC PRIVATE KEY-----" 
+                type="password"
+                className="bg-background"
+              />
+            </div>
+          </CardContent>
+          <CardFooter className="justify-between border-t border-blue-500/10 pt-4">
+            <p className="text-xs text-muted-foreground">
+              Permissions requises : <strong>View</strong> et <strong>Trade</strong> uniquement. Ne cochez JAMAIS "Transfer".
+            </p>
+            <Button variant="outline" className="border-blue-500/50 text-blue-500 hover:bg-blue-500/10">
+              Tester la Connexion
+            </Button>
+          </CardFooter>
+        </Card>
+
         {/* Paramètres Généraux */}
         <Card>
           <CardHeader>

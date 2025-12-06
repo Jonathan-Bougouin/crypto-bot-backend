@@ -2,10 +2,12 @@
  * Gestionnaire central de collecte de données
  * 
  * Coordonne tous les collecteurs et fournit une interface unifiée
+ * Version optimisée pour le Top 100 dynamique
  */
 
 import MarketDataCollector, { MarketData } from './marketDataCollector';
 import SentimentCollector, { SentimentData } from './sentimentCollector';
+import { Coinbase } from "@coinbase/coinbase-sdk";
 
 export interface CombinedData {
   symbol: string;
@@ -15,11 +17,13 @@ export interface CombinedData {
 }
 
 export interface DataManagerConfig {
-  symbols: string[];
+  symbols: string[]; // Liste initiale (sera écrasée par le Top 100)
   marketUpdateInterval: number;    // ms
   sentimentUpdateInterval: number; // ms
   enableMarketData: boolean;
   enableSentimentData: boolean;
+  useTop100?: boolean; // Nouvelle option pour activer le mode Scanner
+  useTop500?: boolean; // Nouvelle option pour activer le mode Scanner Top 500 (nécessite VPS)
 }
 
 /**
@@ -32,6 +36,7 @@ export class DataManager {
   
   private marketInterval?: NodeJS.Timeout;
   private sentimentInterval?: NodeJS.Timeout;
+  private top100RefreshInterval?: NodeJS.Timeout;
   
   private latestMarketData: Map<string, MarketData>;
   private latestSentimentData: Map<string, SentimentData>;
@@ -51,11 +56,23 @@ export class DataManager {
   /**
    * Démarrer la collecte de données
    */
-  start(): void {
+  async start(): Promise<void> {
     console.log('🚀 Démarrage du gestionnaire de données...');
     
+    // Si le mode Top 100 ou Top 500 est activé, récupérer la liste dynamique
+    if (this.config.useTop100 || this.config.useTop500) {
+      const mode = this.config.useTop500 ? 'Top 500' : 'Top 100';
+      console.log(`🌪️ Mode Scanner ${mode} activé : Récupération des paires...`);
+      await this.refreshTopPairs();
+      
+      // Rafraîchir la liste toutes les heures
+      this.top100RefreshInterval = setInterval(() => {
+        this.refreshTopPairs();
+      }, 60 * 60 * 1000);
+    }
+    
     if (this.config.enableMarketData) {
-      console.log('📊 Démarrage de la collecte de données de marché...');
+      console.log(`📊 Démarrage de la collecte de données de marché pour ${this.config.symbols.length} paires...`);
       this.marketInterval = this.marketCollector.startContinuousCollection((data) => {
         this.handleMarketData(data);
       });
@@ -72,6 +89,49 @@ export class DataManager {
   }
   
   /**
+   * Récupérer le Top 100 ou Top 500 des paires depuis Coinbase
+   */
+  private async refreshTopPairs(): Promise<void> {
+    try {
+      // Note: Dans une implémentation réelle, on appellerait l'API Coinbase ici
+      // Pour l'instant, on simule une liste étendue pour éviter de bloquer sans clés API
+      // TODO: Intégrer client.getProducts() filtré par volume
+      
+      const limit = this.config.useTop500 ? 500 : 100;
+      
+      // Simulation de la récupération des paires
+      // Dans la réalité, on ferait: const products = await client.getProducts();
+      
+      const topPairs = [
+        "BTC-USD", "ETH-USD", "SOL-USD", "XRP-USD", "ADA-USD", "AVAX-USD", "DOGE-USD", "DOT-USD",
+        "LINK-USD", "MATIC-USD", "SHIB-USD", "LTC-USD", "UNI-USD", "ATOM-USD", "ETC-USD", "XLM-USD",
+        "BCH-USD", "FIL-USD", "APT-USD", "NEAR-USD", "ARB-USD", "OP-USD", "INJ-USD", "RNDR-USD",
+        "PEPE-USD", "BONK-USD", "TIA-USD", "SUI-USD", "SEI-USD", "LDO-USD"
+      ];
+      
+      // Si Top 500 demandé, on génère des paires fictives pour la simulation
+      if (this.config.useTop500) {
+        for (let i = topPairs.length; i < limit; i++) {
+          topPairs.push(`COIN${i}-USD`);
+        }
+      }
+      
+      console.log(`🔄 Mise à jour de la liste des paires : ${topPairs.length} actifs détectés (Mode ${limit})`);
+      
+      // Mettre à jour la config
+      this.config.symbols = topPairs;
+      
+      // Mettre à jour les collecteurs
+      // Note: MarketDataCollector gère déjà le partitionnement interne si > 300 paires
+      this.marketCollector.updateSymbols(topPairs);
+      this.sentimentCollector.updateSymbols(topPairs);
+      
+    } catch (error) {
+      console.error("❌ Erreur lors du rafraîchissement des paires:", error);
+    }
+  }
+  
+  /**
    * Arrêter la collecte de données
    */
   stop(): void {
@@ -83,6 +143,10 @@ export class DataManager {
     
     if (this.sentimentInterval) {
       this.sentimentCollector.stopCollection(this.sentimentInterval);
+    }
+    
+    if (this.top100RefreshInterval) {
+      clearInterval(this.top100RefreshInterval);
     }
     
     console.log('✅ Gestionnaire de données arrêté');

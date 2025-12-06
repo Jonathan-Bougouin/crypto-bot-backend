@@ -65,6 +65,14 @@ export class MarketDataCollector {
   }
   
   /**
+   * Mettre à jour la liste des symboles surveillés
+   */
+  updateSymbols(newSymbols: string[]): void {
+    console.log(`📊 Mise à jour des symboles de marché : ${this.symbols.length} -> ${newSymbols.length}`);
+    this.symbols = newSymbols;
+  }
+  
+  /**
    * Collecter les données actuelles du marché
    */
   async collectCurrentData(symbol: string): Promise<MarketData> {

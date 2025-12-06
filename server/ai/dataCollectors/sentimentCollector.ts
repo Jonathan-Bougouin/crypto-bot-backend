@@ -54,6 +54,14 @@ export class SentimentCollector {
   }
   
   /**
+   * Mettre à jour la liste des symboles surveillés
+   */
+  updateSymbols(newSymbols: string[]): void {
+    console.log(`💬 Mise à jour des symboles de sentiment : ${this.symbols.length} -> ${newSymbols.length}`);
+    this.symbols = newSymbols;
+  }
+  
+  /**
    * Collecter le sentiment pour un symbole
    */
   async collectSentiment(symbol: string): Promise<SentimentData> {
