@@ -1,45 +1,45 @@
 /**
- * Schéma de base de données pour la plateforme SaaS multi-tenant
+ * Schéma de base de données pour la plateforme SaaS multi-tenant (MySQL)
  */
 
-import { pgTable, text, integer, timestamp, boolean, decimal, uuid, index } from 'drizzle-orm/pg-core';
+import { mysqlTable, text, int, timestamp, boolean, decimal, varchar, index } from 'drizzle-orm/mysql-core';
 import { relations } from 'drizzle-orm';
 
 // ============================================================================
 // UTILISATEURS
 // ============================================================================
 
-export const users = pgTable('users', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  email: text('email').notNull().unique(),
+export const users = mysqlTable('users', {
+  id: varchar('id', { length: 36 }).primaryKey(), // UUID stocké en varchar(36)
+  email: varchar('email', { length: 255 }).notNull().unique(),
   passwordHash: text('password_hash').notNull(),
   
   // Profil
-  firstName: text('first_name'),
-  lastName: text('last_name'),
+  firstName: varchar('first_name', { length: 100 }),
+  lastName: varchar('last_name', { length: 100 }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   lastLogin: timestamp('last_login'),
   
   // Abonnement
-  subscriptionStatus: text('subscription_status').$type<'active' | 'canceled' | 'past_due' | 'trialing' | 'none'>().default('none'),
-  subscriptionPlan: text('subscription_plan').$type<'starter' | 'pro' | 'enterprise'>(),
+  subscriptionStatus: varchar('subscription_status', { length: 50 }).default('none'), // 'active', 'canceled', etc.
+  subscriptionPlan: varchar('subscription_plan', { length: 50 }), // 'starter', 'pro', 'enterprise'
   subscriptionStartDate: timestamp('subscription_start_date'),
   subscriptionEndDate: timestamp('subscription_end_date'),
   trialEndsAt: timestamp('trial_ends_at'),
   
   // Facturation Stripe
-  stripeCustomerId: text('stripe_customer_id'),
-  stripeSubscriptionId: text('stripe_subscription_id'),
-  billingEmail: text('billing_email'),
+  stripeCustomerId: varchar('stripe_customer_id', { length: 255 }),
+  stripeSubscriptionId: varchar('stripe_subscription_id', { length: 255 }),
+  billingEmail: varchar('billing_email', { length: 255 }),
   
   // Statut
   isActive: boolean('is_active').default(true),
   isEmailVerified: boolean('is_email_verified').default(false),
-  emailVerificationToken: text('email_verification_token'),
-  role: text('role').$type<'user' | 'admin'>().default('user'),
+  emailVerificationToken: varchar('email_verification_token', { length: 255 }),
+  role: varchar('role', { length: 20 }).default('user'), // 'user', 'admin'
   
   // Réinitialisation de mot de passe
-  resetPasswordToken: text('reset_password_token'),
+  resetPasswordToken: varchar('reset_password_token', { length: 255 }),
   resetPasswordExpires: timestamp('reset_password_expires'),
 }, (table) => ({
   emailIdx: index('email_idx').on(table.email),
@@ -50,16 +50,16 @@ export const users = pgTable('users', {
 // CLÉS API COINBASE
 // ============================================================================
 
-export const coinbaseApiKeys = pgTable('coinbase_api_keys', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+export const coinbaseApiKeys = mysqlTable('coinbase_api_keys', {
+  id: varchar('id', { length: 36 }).primaryKey(),
+  userId: varchar('user_id', { length: 36 }).notNull(), // Pas de FK contrainte stricte pour simplifier, géré par l'app
   
   // Clés chiffrées (AES-256-GCM)
   apiKeyId: text('api_key_id').notNull(), // Chiffré
   apiSecret: text('api_secret').notNull(), // Chiffré
   
   // Métadonnées
-  nickname: text('nickname'),
+  nickname: varchar('nickname', { length: 100 }),
   isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   lastUsed: timestamp('last_used'),
@@ -76,10 +76,10 @@ export const coinbaseApiKeys = pgTable('coinbase_api_keys', {
 // CONFIGURATION BOT
 // ============================================================================
 
-export const botConfigs = pgTable('bot_configs', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  apiKeyId: uuid('api_key_id').references(() => coinbaseApiKeys.id, { onDelete: 'set null' }),
+export const botConfigs = mysqlTable('bot_configs', {
+  id: varchar('id', { length: 36 }).primaryKey(),
+  userId: varchar('user_id', { length: 36 }).notNull(),
+  apiKeyId: varchar('api_key_id', { length: 36 }),
   
   // Configuration générale
   totalCapital: decimal('total_capital', { precision: 10, scale: 2 }).default('0'),
@@ -87,12 +87,12 @@ export const botConfigs = pgTable('bot_configs', {
   autoTrade: boolean('auto_trade').default(false),
   
   // Limites
-  maxDailyTrades: integer('max_daily_trades').default(10),
-  maxOpenPositions: integer('max_open_positions').default(3),
+  maxDailyTrades: int('max_daily_trades').default(10),
+  maxOpenPositions: int('max_open_positions').default(3),
   riskPerTrade: decimal('risk_per_trade', { precision: 5, scale: 2 }).default('2'), // %
   
   // Stratégies (JSON)
-  strategies: text('strategies').notNull().default('{}'),
+  strategies: text('strategies').notNull(), // JSON string
   
   // État
   isRunning: boolean('is_running').default(false),
@@ -110,15 +110,15 @@ export const botConfigs = pgTable('bot_configs', {
 // POSITIONS
 // ============================================================================
 
-export const positions = pgTable('positions', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  botConfigId: uuid('bot_config_id').references(() => botConfigs.id, { onDelete: 'set null' }),
+export const positions = mysqlTable('positions', {
+  id: varchar('id', { length: 36 }).primaryKey(),
+  userId: varchar('user_id', { length: 36 }).notNull(),
+  botConfigId: varchar('bot_config_id', { length: 36 }),
   
   // Trade
-  symbol: text('symbol').notNull(),
-  side: text('side').$type<'buy' | 'sell'>().notNull(),
-  strategy: text('strategy').notNull(),
+  symbol: varchar('symbol', { length: 20 }).notNull(),
+  side: varchar('side', { length: 10 }).notNull(), // 'buy', 'sell'
+  strategy: varchar('strategy', { length: 50 }).notNull(),
   
   // Prix
   entryPrice: decimal('entry_price', { precision: 20, scale: 8 }).notNull(),
@@ -143,11 +143,11 @@ export const positions = pgTable('positions', {
   closeTime: timestamp('close_time'),
   
   // Statut
-  status: text('status').$type<'open' | 'closed'>().default('open'),
-  closeReason: text('close_reason').$type<'manual' | 'stop-loss' | 'take-profit' | 'signal'>(),
+  status: varchar('status', { length: 20 }).default('open'), // 'open', 'closed'
+  closeReason: varchar('close_reason', { length: 50 }), // 'manual', 'stop-loss', 'take-profit', 'signal'
   
   // Ordre Coinbase
-  coinbaseOrderId: text('coinbase_order_id'),
+  coinbaseOrderId: varchar('coinbase_order_id', { length: 255 }),
 }, (table) => ({
   userIdIdx: index('positions_user_id_idx').on(table.userId),
   statusIdx: index('positions_status_idx').on(table.status),
@@ -158,18 +158,18 @@ export const positions = pgTable('positions', {
 // ABONNEMENTS
 // ============================================================================
 
-export const subscriptions = pgTable('subscriptions', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+export const subscriptions = mysqlTable('subscriptions', {
+  id: varchar('id', { length: 36 }).primaryKey(),
+  userId: varchar('user_id', { length: 36 }).notNull(),
   
   // Stripe
-  stripeSubscriptionId: text('stripe_subscription_id').notNull().unique(),
-  stripeCustomerId: text('stripe_customer_id').notNull(),
-  stripePriceId: text('stripe_price_id').notNull(),
+  stripeSubscriptionId: varchar('stripe_subscription_id', { length: 255 }).notNull().unique(),
+  stripeCustomerId: varchar('stripe_customer_id', { length: 255 }).notNull(),
+  stripePriceId: varchar('stripe_price_id', { length: 255 }).notNull(),
   
   // Plan
-  plan: text('plan').$type<'starter' | 'pro' | 'enterprise'>().notNull(),
-  status: text('status').$type<'active' | 'canceled' | 'past_due' | 'trialing'>().notNull(),
+  plan: varchar('plan', { length: 50 }).notNull(), // 'starter', 'pro', 'enterprise'
+  status: varchar('status', { length: 50 }).notNull(), // 'active', 'canceled', etc.
   
   // Dates
   currentPeriodStart: timestamp('current_period_start').notNull(),
@@ -180,8 +180,8 @@ export const subscriptions = pgTable('subscriptions', {
   
   // Facturation
   amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
-  currency: text('currency').default('eur'),
-  interval: text('interval').$type<'month' | 'year'>().default('month'),
+  currency: varchar('currency', { length: 10 }).default('eur'),
+  interval: varchar('interval', { length: 20 }).default('month'), // 'month', 'year'
   
   // Métadonnées
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -195,21 +195,21 @@ export const subscriptions = pgTable('subscriptions', {
 // HISTORIQUE DES PAIEMENTS
 // ============================================================================
 
-export const payments = pgTable('payments', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  subscriptionId: uuid('subscription_id').references(() => subscriptions.id, { onDelete: 'set null' }),
+export const payments = mysqlTable('payments', {
+  id: varchar('id', { length: 36 }).primaryKey(),
+  userId: varchar('user_id', { length: 36 }).notNull(),
+  subscriptionId: varchar('subscription_id', { length: 36 }),
   
   // Stripe
-  stripePaymentIntentId: text('stripe_payment_intent_id').unique(),
-  stripeInvoiceId: text('stripe_invoice_id'),
+  stripePaymentIntentId: varchar('stripe_payment_intent_id', { length: 255 }).unique(),
+  stripeInvoiceId: varchar('stripe_invoice_id', { length: 255 }),
   
   // Montant
   amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
-  currency: text('currency').default('eur'),
+  currency: varchar('currency', { length: 10 }).default('eur'),
   
   // Statut
-  status: text('status').$type<'succeeded' | 'pending' | 'failed'>().notNull(),
+  status: varchar('status', { length: 50 }).notNull(), // 'succeeded', 'pending', 'failed'
   failureReason: text('failure_reason'),
   
   // Dates
@@ -224,14 +224,14 @@ export const payments = pgTable('payments', {
 // ALERTES
 // ============================================================================
 
-export const alerts = pgTable('alerts', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }), // null = alerte globale
+export const alerts = mysqlTable('alerts', {
+  id: varchar('id', { length: 36 }).primaryKey(),
+  userId: varchar('user_id', { length: 36 }), // null = alerte globale
   
-  symbol: text('symbol').notNull(),
-  type: text('type').notNull(),
+  symbol: varchar('symbol', { length: 20 }).notNull(),
+  type: varchar('type', { length: 50 }).notNull(),
   message: text('message').notNull(),
-  confidence: integer('confidence'),
+  confidence: int('confidence'),
   
   // Indicateurs
   rsi: decimal('rsi', { precision: 5, scale: 2 }),
@@ -253,18 +253,18 @@ export const alerts = pgTable('alerts', {
 // LOGS D'ACTIVITÉ
 // ============================================================================
 
-export const activityLogs = pgTable('activity_logs', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }),
+export const activityLogs = mysqlTable('activity_logs', {
+  id: varchar('id', { length: 36 }).primaryKey(),
+  userId: varchar('user_id', { length: 36 }),
   
   // Action
-  action: text('action').notNull(), // 'login', 'trade', 'config_update', etc.
-  entity: text('entity'), // 'position', 'bot_config', etc.
-  entityId: uuid('entity_id'),
+  action: varchar('action', { length: 100 }).notNull(), // 'login', 'trade', 'config_update', etc.
+  entity: varchar('entity', { length: 100 }), // 'position', 'bot_config', etc.
+  entityId: varchar('entity_id', { length: 36 }),
   
   // Détails
   details: text('details'), // JSON
-  ipAddress: text('ip_address'),
+  ipAddress: varchar('ip_address', { length: 45 }),
   userAgent: text('user_agent'),
   
   // Métadonnées
@@ -279,7 +279,7 @@ export const activityLogs = pgTable('activity_logs', {
 // RELATIONS
 // ============================================================================
 
-export const usersRelations = relations(users, ({ many, one }) => ({
+export const usersRelations = relations(users, ({ many }) => ({
   apiKeys: many(coinbaseApiKeys),
   botConfigs: many(botConfigs),
   positions: many(positions),
