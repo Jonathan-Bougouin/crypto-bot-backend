@@ -46,25 +46,55 @@ ufw --force enable
 
 # 5. Clonage et Installation du Projet
 echo -e "${GREEN}📥 [4/6] Récupération du code source...${NC}"
-# Note: Dans un cas réel, on utiliserait le repo git de l'utilisateur
-# Ici, on simule la création du dossier pour la démo
+# Configuration du dossier
 mkdir -p /var/www/crypto-bot
 cd /var/www/crypto-bot
 
-# Simulation de récupération des fichiers (à remplacer par git clone)
+# Clonage du repository
 echo "Clonage du repository..."
-# git clone https://github.com/Jonathan-Bougouin/crypto-bot-backend.git .
+git clone https://github.com/Jonathan-Bougouin/crypto-bot-backend.git .
 
 # Installation des dépendances
 echo -e "${GREEN}📦 [5/6] Installation des dépendances...${NC}"
-# pnpm install
-# pnpm build
+pnpm install
+pnpm build
+
+# Configuration des variables d'environnement (Interactive)
+echo -e "${BLUE}🔑 Configuration des Clés API (Appuyez sur Entrée pour passer si déjà configuré)${NC}"
+if [ ! -f .env ]; then
+    cp .env.example .env 2>/dev/null || touch .env
+fi
+
+# Fonction pour demander une variable si elle n'existe pas
+ask_var() {
+    local var_name=$1
+    local prompt_text=$2
+    local current_val=$(grep "^$var_name=" .env | cut -d '=' -f2-)
+    
+    if [ -z "$current_val" ]; then
+        read -p "$prompt_text: " user_input
+        if [ ! -z "$user_input" ]; then
+            echo "$var_name=$user_input" >> .env
+        fi
+    else
+        echo "$var_name est déjà configuré."
+    fi
+}
+
+ask_var "COINBASE_API_KEY_ID" "Entrez votre COINBASE_API_KEY_ID"
+ask_var "COINBASE_API_SECRET" "Entrez votre COINBASE_API_SECRET"
+ask_var "JWT_SECRET" "Entrez un secret pour JWT (ou laissez vide pour générer auto)"
+
+# Génération auto du JWT si vide
+if ! grep -q "JWT_SECRET" .env; then
+    echo "JWT_SECRET=$(openssl rand -hex 32)" >> .env
+fi
 
 # 6. Démarrage avec PM2 (Gestionnaire de processus)
 echo -e "${GREEN}🚀 [6/6] Démarrage du Bot Top 500...${NC}"
-# pm2 start dist/server/index.js --name "crypto-bot-pro"
-# pm2 save
-# pm2 startup
+pm2 start dist/server/index.js --name "crypto-bot-pro"
+pm2 save
+pm2 startup
 
 echo -e "${BLUE}"
 echo "=================================================================="
