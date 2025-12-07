@@ -3,7 +3,7 @@
 Ce guide est conçu pour vous permettre de déployer votre bot de trading sur un serveur professionnel (VPS) sans aucune connaissance technique préalable.
 
 **Temps estimé :** 10 minutes
-**Coût :** ~4-5€ / mois (Hetzner)
+**Coût :** ~9€ / mois (Hetzner CX32 - Recommandé pour Top 500)
 
 ---
 
@@ -14,7 +14,7 @@ Ce guide est conçu pour vous permettre de déployer votre bot de trading sur un
 3.  Cliquez sur **"Add Server"** et sélectionnez exactement ces options :
     *   **Location :** Falkenstein ou Nuremberg (Allemagne)
     *   **Image :** Ubuntu 24.04
-    *   **Type :** Shared vCPU (x86) -> **CX22** (2 vCPU / 4 GB RAM) - *C'est l'option à ~4€*
+    *   **Type :** Shared vCPU (x86) -> **CX32** (4 vCPU / 8 GB RAM) - *Option recommandée pour le Top 500 (~9€)*
     *   **Networking :** Laissez par défaut (Public IPv4)
     *   **SSH Keys :** (Optionnel, vous recevrez un mot de passe par email si vous ne mettez rien)
 4.  Cliquez sur **"Create & Buy"**.

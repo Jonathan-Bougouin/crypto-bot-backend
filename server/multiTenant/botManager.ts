@@ -281,6 +281,16 @@ export class BotManager {
   }
   
   /**
+   * Obtenir la limite de capital pour le plan de l'utilisateur
+   * (Simulation - À connecter à la DB réelle)
+   */
+  private getPlanLimit(userId: string): number {
+    // TODO: Récupérer le plan réel depuis la DB users
+    // Pour l'instant, on retourne une valeur par défaut basée sur une logique simulée
+    return 5000; // Limite Starter par défaut
+  }
+
+  /**
    * Vérifier l'état des bots
    */
   private checkBots(): void {
@@ -304,6 +314,20 @@ export class BotManager {
         
         if (inactiveTime > maxInactiveTime && instance.isRunning) {
           console.warn(`⚠️  Bot ${userId} inactif depuis ${inactiveTime / 1000 / 60 / 60}h`);
+        }
+
+        // SMART UPSELL : Vérifier si le capital dépasse la limite du plan
+        // Note: Dans une implémentation réelle, on récupérerait le solde Coinbase
+        // Ici on simule une vérification basée sur le totalCapital configuré
+        const currentCapital = typeof instance.config.totalCapital === 'number' 
+          ? instance.config.totalCapital 
+          : parseFloat(instance.config.totalCapital || '0');
+        const planLimit = this.getPlanLimit(instance.userId); // À implémenter : récupérer le plan user
+        
+        if (planLimit > 0 && currentCapital > planLimit) {
+          console.log(`💰 UPSELL OPPORTUNITY: User ${userId} capital (${currentCapital}) exceeds plan limit (${planLimit})`);
+          // TODO: Déclencher une notification ou un email d'upsell
+          // this.notificationService.sendUpsellAlert(userId, currentCapital, planLimit);
         }
         
       } catch (error) {

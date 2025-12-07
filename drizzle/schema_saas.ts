@@ -370,3 +370,45 @@ export const leads = mysqlTable('leads', {
 }, (table) => ({
   emailIdx: index('leads_email_idx').on(table.email),
 }));
+
+// ============================================================================
+// AFFILIATION & PARRAINAGE
+// ============================================================================
+
+export const referrals = mysqlTable('referrals', {
+  id: varchar('id', { length: 36 }).primaryKey(),
+  referrerId: varchar('referrer_id', { length: 36 }).notNull(), // Parrain
+  referredId: varchar('referred_id', { length: 36 }).notNull().unique(), // Filleul
+  
+  // Statut
+  status: varchar('status', { length: 50 }).default('pending'), // 'pending', 'active', 'converted'
+  rewardStatus: varchar('reward_status', { length: 50 }).default('pending'), // 'pending', 'paid'
+  
+  // Récompense
+  commissionAmount: decimal('commission_amount', { precision: 10, scale: 2 }).default('0'),
+  currency: varchar('currency', { length: 10 }).default('eur'),
+  
+  // Métadonnées
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  convertedAt: timestamp('converted_at'),
+  paidAt: timestamp('paid_at'),
+}, (table) => ({
+  referrerIdx: index('referrals_referrer_idx').on(table.referrerId),
+  referredIdx: index('referrals_referred_idx').on(table.referredId),
+}));
+
+export const affiliateCodes = mysqlTable('affiliate_codes', {
+  id: varchar('id', { length: 36 }).primaryKey(),
+  userId: varchar('user_id', { length: 36 }).notNull().unique(),
+  code: varchar('code', { length: 20 }).notNull().unique(),
+  
+  // Stats
+  clicks: int('clicks').default(0),
+  conversions: int('conversions').default(0),
+  totalEarnings: decimal('total_earnings', { precision: 10, scale: 2 }).default('0'),
+  
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+}, (table) => ({
+  codeIdx: index('affiliate_codes_code_idx').on(table.code),
+  userIdIdx: index('affiliate_codes_user_id_idx').on(table.userId),
+}));
