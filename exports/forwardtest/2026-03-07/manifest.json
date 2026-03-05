@@ -1,0 +1,61 @@
+{
+  "version": "1.0",
+  "phase": "1.4",
+  "day": "J3",
+  "date": "2026-03-07",
+  "window": {
+    "from": "2026-03-07T00:00:00Z",
+    "to": "2026-03-07T23:59:59Z"
+  },
+  "generatedAt": "2026-03-05T10:36:52.715369Z",
+  "observationMode": true,
+  "randomSeed": 20260307,
+  "capitalInitial": 50.0,
+  "capitalFinal": 50.0,
+  "pnl": 0.0,
+  "pnlPercent": 0.0,
+  "assets": [
+    "BTC-EUR",
+    "ETH-EUR",
+    "SOL-EUR",
+    "PEPE-EUR",
+    "BNB-EUR"
+  ],
+  "stats": {
+    "totalDecisions": 120,
+    "buyCount": 7,
+    "sellCount": 0,
+    "holdCount": 113,
+    "rejectCount": 0,
+    "totalSignals": 360,
+    "triggeredSignals": 148,
+    "triggeredByType": {
+      "EMA_CROSS": 67,
+      "RSI": 30,
+      "MACD": 51
+    },
+    "equitySnapshots": 24,
+    "topRejectReasons": {},
+    "holdVsRejectNote": "HOLD=signal absent/insuffisant | REJECT=MAX_DAILY_TRADES atteint"
+  },
+  "files": {
+    "decisions.jsonl": {
+      "exists": true,
+      "sizeBytes": 56948,
+      "sha256": "fdee5dbd606b9f012eed41b72bce35b9dfce627eb4a80ea2c329d1317628836a",
+      "recordCount": 120
+    },
+    "signals.jsonl": {
+      "exists": true,
+      "sizeBytes": 76051,
+      "sha256": "2255e2fd643993f6a2764544c143a8fd995f15c179cea9fe7baab22f4a611078",
+      "recordCount": 360
+    },
+    "equity.csv.jsonl": {
+      "exists": true,
+      "sizeBytes": 5208,
+      "sha256": "71317cc64fbeb508bbacbe7d5a04e97aabdc1e9da47afbd4ea0494e0649e3a0b",
+      "recordCount": 24
+    }
+  }
+}
