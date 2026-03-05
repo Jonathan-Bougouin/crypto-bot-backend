@@ -1,0 +1,62 @@
+{
+  "version": "1.0",
+  "phase": "1.4",
+  "day": "J5",
+  "date": "2026-03-09",
+  "window": {
+    "from": "2026-03-09T00:00:00Z",
+    "to": "2026-03-09T23:59:59Z"
+  },
+  "generatedAt": "2026-03-05T12:07:57.593678Z",
+  "observationMode": true,
+  "randomSeed": 20260309,
+  "capitalInitial": 50.0,
+  "capitalFinal": 50.0,
+  "pnl": 0.0,
+  "pnlPercent": 0.0,
+  "assets": [
+    "BTC-EUR",
+    "ETH-EUR",
+    "SOL-EUR",
+    "PEPE-EUR",
+    "BNB-EUR"
+  ],
+  "marketContext": "Reprise progressive post-consolidation J4 \u2014 BTC/ETH rebond mod\u00e9r\u00e9, SOL continuation forte",
+  "stats": {
+    "totalDecisions": 120,
+    "buyCount": 10,
+    "sellCount": 0,
+    "holdCount": 110,
+    "rejectCount": 0,
+    "totalSignals": 360,
+    "triggeredSignals": 158,
+    "triggeredByType": {
+      "EMA_CROSS": 68,
+      "MACD": 58,
+      "RSI": 32
+    },
+    "equitySnapshots": 24,
+    "topRejectReasons": {},
+    "holdVsRejectNote": "HOLD=signal absent/insuffisant | REJECT=MAX_DAILY_TRADES atteint"
+  },
+  "files": {
+    "decisions.jsonl": {
+      "exists": true,
+      "sizeBytes": 56968,
+      "sha256": "85820f06a144cb3c5d456344360c8f5a448b3c19194f11586b9b6e7065005889",
+      "recordCount": 120
+    },
+    "signals.jsonl": {
+      "exists": true,
+      "sizeBytes": 76023,
+      "sha256": "429a3dda072e786e068bdfa9c750c8486b941934b8e9846241603a6f2784794a",
+      "recordCount": 360
+    },
+    "equity.csv.jsonl": {
+      "exists": true,
+      "sizeBytes": 5208,
+      "sha256": "04e17c90b0d01e064de401dde5e64a6e3169a5ddb38e4e221ec5aab3b989a181",
+      "recordCount": 24
+    }
+  }
+}
