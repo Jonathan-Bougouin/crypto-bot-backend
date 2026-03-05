@@ -1,0 +1,3 @@
+49ce8304406717cdddac71f0320f807d6277fcb990c17fbdfd4cdae2b7088830  decisions.jsonl
+22b3c3b2cc8acc155e53b6bab715fde8b8403ea6d58aadd384e9211685150faf  signals.jsonl
+3beada6b53fe90d18da39df69cd80b09fb8b31f8514ff800f48d42ae0e432ba4  equity.csv.jsonl
